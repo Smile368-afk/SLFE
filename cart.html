@@ -185,87 +185,95 @@
   </div>
 
   <script>
-    const menuToggle = document.getElementById("menu-toggle");
-    const navLinks = document.getElementById("navLinks");
-    const cartItemsDiv = document.getElementById("cartItems");
-    const paymentMethod = document.getElementById("paymentMethod");
-    const easyInstructions = document.getElementById("easyInstructions");
-    const codMessage = document.getElementById("codMessage");
+  const menuToggle = document.getElementById("menu-toggle");
+  const navLinks = document.getElementById("navLinks");
+  const cartItemsDiv = document.getElementById("cartItems");
+  const paymentMethod = document.getElementById("paymentMethod");
+  const easyInstructions = document.getElementById("easyInstructions");
+  const codMessage = document.getElementById("codMessage");
 
-    menuToggle.addEventListener("click", () => {
-      navLinks.style.display = navLinks.style.display === "block" ? "none" : "block";
-    });
+  menuToggle.addEventListener("click", () => {
+    navLinks.style.display = navLinks.style.display === "block" ? "none" : "block";
+  });
 
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    function displayCart() {
-      if (cart.length === 0) {
-        cartItemsDiv.innerHTML = "<p>Your cart is empty.</p>";
-        return;
-      }
+  function displayCart() {
+    if (cart.length === 0) {
+      cartItemsDiv.innerHTML = "<p>Your cart is empty.</p>";
+      return;
+    }
 
-      cartItemsDiv.innerHTML = "";
-      cart.forEach((item, index) => {
-        cartItemsDiv.innerHTML += `
-          <div class="cart-item">
-            <img src="${item.image || 'https://via.placeholder.com/120x150.png?text=Product'}" alt="Product Image" />
-            <div class="item-details">
-              <strong>${item.product}</strong><br />
-              Size: ${item.size} | Qty: ${item.quantity} | Price: Rs.${item.price}
-            </div>
-            <div>
-              <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
-            </div>
+    cartItemsDiv.innerHTML = "";
+    cart.forEach((item, index) => {
+      cartItemsDiv.innerHTML += `
+        <div class="cart-item">
+          <img src="${item.image || 'https://via.placeholder.com/120x150.png?text=Product'}" alt="Product Image" />
+          <div class="item-details">
+            <strong>${item.product}</strong><br />
+            Size: ${item.size} | Qty: ${item.quantity} | Price: Rs.${item.price}
           </div>
-        `;
-      });
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      localStorage.setItem('cart', JSON.stringify(cart));
-      displayCart();
-    }
-
-    paymentMethod.addEventListener('change', () => {
-      const method = paymentMethod.value;
-      easyInstructions.style.display = method === "EasyPaisa" ? 'block' : 'none';
-      codMessage.style.display = method === "CashOnDelivery" ? 'block' : 'none';
+          <div>
+            <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+          </div>
+        </div>
+      `;
     });
+  }
 
-    document.getElementById("checkoutForm").addEventListener("submit", function (e) {
-      e.preventDefault();
+  function removeFromCart(index) {
+    cart.splice(index, 1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    displayCart();
+  }
 
-      if (cart.length === 0) {
-        alert("Your cart is empty.");
-        return;
-      }
+  paymentMethod.addEventListener('change', () => {
+    const method = paymentMethod.value;
+    easyInstructions.style.display = method === "EasyPaisa" ? 'block' : 'none';
+    codMessage.style.display = method === "CashOnDelivery" ? 'block' : 'none';
+  });
 
-      const form = e.target;
-      const formData = new FormData(form);
-      formData.append("cart", JSON.stringify(cart));
+  document.getElementById("checkoutForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-      fetch("https://smileslyfb.onrender.com/checkout", {
+    if (cart.length === 0) {
+      alert("Your cart is empty.");
+      return;
+    }
+
+    const form = e.target;
+    const formData = new FormData(form);
+    formData.append("cart", JSON.stringify(cart));
+
+    // 🔍 Debug: Log formData before sending
+    console.log("🛒 Sending cart:", cart);
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+
+    try {
+      const response = await fetch("https://smileslyfb.onrender.com/checkout", {
         method: "POST",
         body: formData
-      })
-      .then(response => {
-        if (response.ok) {
-          alert("Order confirmed and saved to database!");
-          localStorage.removeItem('cart');
-          window.location.href = "thankyou.html";
-        } else {
-          alert("Failed to submit order.");
-        }
-      })
-      .catch(error => {
-        console.error(error);
-        alert("Error submitting order.");
       });
-    });
 
-    displayCart();
-  </script>
+      if (response.ok) {
+        alert("✅ Order confirmed and saved to database!");
+        localStorage.removeItem('cart');
+        window.location.href = "thankyou.html";
+      } else {
+        const text = await response.text();
+        console.error("❌ Backend responded with error:", text);
+        alert("❌ Failed to submit order. Server error.");
+      }
+    } catch (error) {
+      console.error("❌ Network or Fetch error:", error);
+      alert("❌ Error submitting order. Check internet or try again.");
+    }
+  });
+
+  displayCart();
+</script>
 
 </body>
 </html>
