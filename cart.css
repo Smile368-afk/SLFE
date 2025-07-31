@@ -1,0 +1,134 @@
+
+    body {
+      background-color: #0d0d0d;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav.navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #222;
+      padding: 15px 30px;
+      color: white;
+    }
+
+    nav .logo a {
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: bold;
+      color: #0f0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: white;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #0f0;
+    }
+
+    .menu-toggle {
+      display: none;
+      cursor: pointer;
+      font-size: 24px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background-color: #1c1c1c;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #0f0;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #0f0;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    input, select {
+      background-color: #333;
+      color: #fff;
+    }
+
+    button {
+      background-color: crimson;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: darkred;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 15px;
+      padding: 12px;
+      background: #4b4949;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .cart-item img {
+      width: 100px;
+      border-radius: 6px;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .remove-btn {
+      background: #444;
+      color: red;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .remove-btn:hover {
+      background: #222;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        background-color: #222;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        width: 200px;
+        padding: 10px;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+    }
